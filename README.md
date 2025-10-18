@@ -1,15 +1,31 @@
 # AI Agent Backend - Voice Call Assistant
 
-A Node.js/Express backend service that powers an AI voice assistant for salon customer service. The system uses LiveKit for real-time voice communication and integrates with OpenAI for intelligent conversation handling.
+A Node.js/Express backend service that powers an AI voice assistant for salon customer service. The system uses LiveKit for real-time voice communication and integrates with Google Gemini for intelligent conversation handling.
 
 ## Features
 
 - **Real-time Voice Calls** - LiveKit integration for voice communication
-- **AI-Powered Assistant** - OpenAI GPT-4 powered conversational agent
+- **AI-Powered Assistant** - Google Gemini 2.0 Flash powered conversational agent
+- **Speech Recognition** - Deepgram for accurate speech-to-text
+- **Natural Voice** - ElevenLabs for human-like text-to-speech
 - **Knowledge Base** - Searchable database of salon information
 - **Help Request System** - Escalation to human supervisors when needed
 - **Call Session Management** - Track and manage customer calls
 - **MongoDB Database** - Persistent storage for calls, requests, and knowledge
+
+## AI Services (All with Free Tiers!)
+
+This project uses three AI services, all with generous free tiers:
+
+| Service | Purpose | Free Tier | Cost After Free |
+|---------|---------|-----------|-----------------|
+| **Google Gemini** | Conversational AI (LLM) | Unlimited* | Free |
+| **Deepgram** | Speech-to-Text (STT) | $200 credit | ~$0.0043/min |
+| **ElevenLabs** | Text-to-Speech (TTS) | 10k chars/month | Pay as you go |
+
+*Within rate limits (60 requests/min)
+
+**Estimated cost per 5-minute call (after free tiers):** ~$0.05
 
 ## Tech Stack
 
@@ -17,7 +33,10 @@ A Node.js/Express backend service that powers an AI voice assistant for salon cu
 - **Framework**: Express.js
 - **Database**: MongoDB with Mongoose
 - **Voice**: LiveKit Server SDK
-- **AI**: LiveKit Agents with OpenAI plugin
+- **AI**: 
+  - LLM: Google Gemini 2.0 Flash (FREE)
+  - STT: Deepgram Speech-to-Text ($200 free credit)
+  - TTS: ElevenLabs Text-to-Speech (10k chars/month free)
 - **Validation**: Zod
 
 ## Project Structure
@@ -61,7 +80,9 @@ ai-agent-BE/
 - Node.js 18+ and npm
 - MongoDB (local or Atlas)
 - LiveKit account and credentials
-- OpenAI API key
+- Google Gemini API key (for LLM) - FREE
+- Deepgram API key (for STT) - $200 free credit
+- ElevenLabs API key (for TTS) - 10k chars/month free
 
 ## Installation
 
@@ -97,17 +118,35 @@ LIVEKIT_URL=wss://your-livekit-server.livekit.cloud
 LIVEKIT_API_KEY=your_api_key
 LIVEKIT_API_SECRET=your_api_secret
 
-# OpenAI (used by agent)
-OPENAI_API_KEY=your_openai_api_key
-
-# Optional: Google Gemini (not currently used)
+# AI Configuration
+# Google Gemini (for LLM) - FREE
 GEMINI_API_KEY=your_gemini_api_key
+
+# Deepgram (for Speech-to-Text) - $200 free credit
+DEEPGRAM_API_KEY=your_deepgram_api_key
+
+# ElevenLabs (for Text-to-Speech) - 10k chars/month free
+ELEVENLABS_API_KEY=your_elevenlabs_api_key
 
 # Configuration
 HELP_REQUEST_TIMEOUT_MINUTES=30
 ```
 
 ## Running the Application
+
+### Test AI Integration First
+
+Before running the agent, verify your API keys work:
+```bash
+npm run test:gemini
+```
+
+This will check if your GEMINI_API_KEY, DEEPGRAM_API_KEY, and ELEVENLABS_API_KEY are properly configured.
+
+**Get API Keys:**
+- Gemini: https://aistudio.google.com/apikey (FREE - no credit card)
+- Deepgram: https://console.deepgram.com/ ($200 free credit)
+- ElevenLabs: https://elevenlabs.io/ (10,000 chars/month free)
 
 ### Development Mode
 
@@ -296,7 +335,10 @@ npm run lint
 - Test connection: `curl http://localhost:3000/api/test/livekit`
 
 ### Agent not responding
-- Ensure OpenAI API key is valid
+- Ensure Google Gemini API key is valid
+- Ensure Deepgram API key is valid
+- Ensure ElevenLabs API key is valid
+- Run `npm run test:gemini` to verify API keys
 - Check agent is running (`npm run agent:dev`)
 - Verify LiveKit room is created
 
@@ -315,8 +357,9 @@ npm run lint
 | `LIVEKIT_URL` | Yes | LiveKit WebSocket URL |
 | `LIVEKIT_API_KEY` | Yes | LiveKit API key |
 | `LIVEKIT_API_SECRET` | Yes | LiveKit API secret |
-| `OPENAI_API_KEY` | Yes | OpenAI API key for agent |
-| `GEMINI_API_KEY` | No | Google Gemini API key (future use) |
+| `GEMINI_API_KEY` | Yes | Google Gemini API key (LLM) - FREE |
+| `DEEPGRAM_API_KEY` | Yes | Deepgram API key (STT) - $200 free credit |
+| `ELEVENLABS_API_KEY` | Yes | ElevenLabs API key (TTS) - 10k chars/month free |
 | `HELP_REQUEST_TIMEOUT_MINUTES` | No | Help request timeout (default: 30) |
 
 ## Contributing

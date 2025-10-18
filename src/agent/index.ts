@@ -1,5 +1,7 @@
 import { JobContext, defineAgent, voice } from '@livekit/agents';
-import * as openai from '@livekit/agents-plugin-openai';
+import * as google from '@livekit/agents-plugin-google';
+import * as deepgram from '@livekit/agents-plugin-deepgram';
+import * as elevenlabs from '@livekit/agents-plugin-elevenlabs';
 import { createAgentTools } from './tools';
 import { DatabaseConfig } from '../config/database';
 import { knowledgeBaseService } from '../services/knowledgeBaseService';
@@ -80,19 +82,17 @@ async function entrypoint(ctx: JobContext) {
 
     console.log(`🔧 Tools loaded: ${Object.keys(tools).length}`);
 
-    // Create OpenAI LLM
-    const llm = new openai.LLM({
-      model: 'gpt-4o-mini',
+    // Create Google Gemini LLM
+    const llm = new google.LLM({
+      model: 'gemini-2.0-flash-exp',
       temperature: 0.7
     });
 
-    // Create STT (Speech-to-Text)
-    const stt = new openai.STT();
+    // Create STT (Speech-to-Text) - Deepgram
+    const stt = new deepgram.STT();
 
-    // Create TTS (Text-to-Speech)
-    const tts = new openai.TTS({
-      voice: 'alloy'
-    });
+    // Create TTS (Text-to-Speech) - ElevenLabs
+    const tts = new elevenlabs.TTS();
 
     // Create the agent with instructions and tools
     const agent = new voice.Agent({
@@ -147,7 +147,7 @@ Remember: You're representing a premium salon. Be professional but friendly!`,
       agent,
       room: ctx.room
     });
-    console.log('✅ Agent session started with OpenAI');
+    console.log('✅ Agent session started with Google Gemini (LLM) + Deepgram (STT) + ElevenLabs (TTS)');
 
     // Generate initial greeting
     console.log('💬 Generating initial greeting...');
