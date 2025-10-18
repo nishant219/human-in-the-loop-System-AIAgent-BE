@@ -200,3 +200,12 @@ export async function getRequestById(requestId: string): Promise<any> {
         throw new Error('Failed to fetch request');
     }
 }
+
+export const helpRequestService = {
+    createHelpRequest,
+    getPendingRequests,
+    getRequestHistory,
+    resolveRequest,
+    handleTimeouts,
+    getRequestById
+};

@@ -2,6 +2,10 @@ import express from "express";
 import cors from "cors";
 import {DatabaseConfig} from "./config/database";
 import dotenv from "dotenv";
+import callRoutes from "./routes/callRoutes";
+import helpRequestRoutes from "./routes/helpRequestRoutes";
+import knowledgeBaseRoutes from "./routes/knowledgeBaseRoutes";
+
 dotenv.config();
 
 const app= express();
@@ -16,6 +20,16 @@ app.use((req, res, next)=>{
     next();
 })
 
+// Health check
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok', message: 'Server is running' });
+});
+
+// API Routes
+app.use('/api/calls', callRoutes);
+app.use('/api/help-requests', helpRequestRoutes);
+app.use('/api/knowledge-base', knowledgeBaseRoutes);
+
 // Error handling middleware
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
   console.error('Error:', err);
@@ -23,11 +37,6 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
     success: false,
     error: err.message || 'Internal server error'
   });
-});
-
-
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', message: 'Server is running' });
 });
 
 DatabaseConfig().catch(console.error);
